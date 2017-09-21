@@ -205,9 +205,20 @@ class OrderCard extends React.Component {
     this.props.update(updatedOrders)
   }
 
+  deleteRecord() {
+    var docId = this.props.orderId
+    db.collection("orders").doc(docId).delete()
+      .then(function() {
+        console.log("Successfully deleted document id " + docId)
+      })
+      .catch(function(error) {
+        console.error("Error writing document: " + error);
+      });
+  }
+
   render() {
     return (
-      <Card.Grid>
+      <Card.Grid onClick={this.deleteRecord.bind(this)} style={gridStyle} >
         <p>ORDER FOR: {this.props.order.user}</p>
         <p>{this.props.order.price}</p>
         <p>{this.props.order.name}</p>
