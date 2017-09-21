@@ -218,9 +218,17 @@ class OrderCard extends React.Component {
   }
 
   render() {
+    var date
+    if (this.props.order.time !== undefined) {
+      var orderDate = new Date(this.props.order.time)
+      date = (orderDate.getMonth()+1) + "/" + orderDate.getDate() + "/" + orderDate.getFullYear()
+    }
+    // var orderDate = this.props.order.time === undefined
+    //   ? "10/05"
+    //   : {date}
     return (
       <Card.Grid onClick={this.deleteRecord.bind(this)} style={gridStyle} >
-        <p>ORDER FOR: {this.props.order.user}</p>
+        <p>{date}</p>
         <p>{(this.props.order.price).toFixed(2)}</p>
         <p>{this.props.order.name}</p>
       </Card.Grid>
@@ -288,7 +296,6 @@ class CustomerRow extends React.Component {
 
   render() {
     var title = "Recent orders for " + this.props.user
-    var user = this.props.user
     var newSum = 0
     for (var i in this.props.orders) {
       var price = this.props.orders[i].data().price
