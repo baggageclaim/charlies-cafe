@@ -129,12 +129,10 @@ class ProductCard extends React.Component {
       </span>;
     return (
       <div>
-        <Popconfirm title="Place order?" okText="Yes" cancelText="No" onConfirm={this.addRecord.bind(this.props)}>
-          <Card.Grid style={gridStyle} >
-            <p>{name}</p>
-            <p>{(this.props.product.price).toFixed(2)}</p>
-          </Card.Grid>
-        </Popconfirm>
+        <Card.Grid onClick={this.addRecord.bind(this.props)} style={gridStyle} >
+          <p>{name}</p>
+          <p>{(this.props.product.price).toFixed(2)}</p>
+        </Card.Grid>
       </div>
       );
   }
