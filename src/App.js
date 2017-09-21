@@ -7,116 +7,70 @@ const TabPane = Tabs.TabPane;
 const db = firebase.firestore();
 const provider = new firebase.auth.GoogleAuthProvider();
 
-// const FormItem = Form.Item;
-
-// function hasErrors(fieldsError) {
-//   return Object.keys(fieldsError).some(field => fieldsError[field]);
-// }
-
 class Header extends React.Component {
   render() {
     return <h1>Charlie's Kitty Cafe</h1>
   }
 }
 
-// class HorizontalLoginForm extends React.Component {
-//   componentDidMount() {
-//     // To disabled submit button at the beginning.
-//     this.props.form.validateFields();
-//   }
-
-//   handleSubmit = (e) => {
-//     e.preventDefault();
-//     this.props.form.validateFields((err, values) => {
-//       if (!err) {
-//         console.log('Received values of form: ', values);
-//       }
-//     });
-//   }
-
-//   render() {
-//     const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
-
-//     // Only show error after a field is touched.
-//     const userNameError = isFieldTouched('userName') && getFieldError('userName');
-//     const passwordError = isFieldTouched('password') && getFieldError('password');
-//     return (
-//       <Form layout="inline" onSubmit={this.handleSubmit}>
-//         <FormItem
-//           validateStatus={userNameError ? 'error' : ''}
-//           help={userNameError || ''}
-//         >
-//           {getFieldDecorator('userName', {
-//             rules: [{ required: true, message: 'Please input your username!' }],
-//           })(
-//             <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="Username" />
-//           )}
-//         </FormItem>
-//         <FormItem
-//           validateStatus={passwordError ? 'error' : ''}
-//           help={passwordError || ''}
-//         >
-//           {getFieldDecorator('password', {
-//             rules: [{ required: true, message: 'Please input your Password!' }],
-//           })(
-//             <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="password" placeholder="Password" />
-//           )}
-//         </FormItem>
-//         <FormItem>
-//           <Button
-//             type="primary"
-//             htmlType="submit"
-//             disabled={hasErrors(getFieldsError())}>
-//             Log in
-//           </Button>
-//         </FormItem>
-//       </Form>
-//     );
-//   }
-// }
-
 class UserSelect extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: ''
+      user: '',
+      buttonMessage: 'Sign In'
     }
   }
 
-  render() {
-    var that = this;
-    const Option = Select.Option;
-    function handleChange(value) {
-      console.log(`selected ${value}`);
+  handleSignInOrOut() {
+    console.log("INSIDE handleSignInOrOut")
+    if (this.state.user === '') { //user signed out
+      this.signInWithGoogle()
+    }
+    else {
+      this.signOutWithGoogle()
+    }
+  }
+
+  signInWithGoogle() {
+    var that = this
+    firebase.auth().signInWithPopup(provider).then(function(result) {
+      var token = result.credential.accessToken;
+      // The signed-in user info.
+      var user = result.user;
+      console.log("USER LOGGED IN AS: " + user.displayName)
       that.setState({
-        user: value
+        user: user.displayName,
+        buttonMessage: 'Sign Out'
       })
-    }
+      console.log(that.state.user)
+    }).catch(function(error) {
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      var email = error.email;
+      var credential = error.credential;
+    });
+  }
 
-    function handleBlur() {
-      console.log('blur');
-    }
+  signOutWithGoogle() {
+    var that = this
+    firebase.auth().signOut().then(function() {
+      // Sign-out successful.
+      that.setState({
+        user: '',
+        buttonMessage: 'Sign In'
+      })
+      }).catch(function(error) {
+        console.log("ERROR SIGNING OUT!")
+    });
+  }
 
-    function handleFocus() {
-      console.log('focus');
-    }
+  render() {
+    console.log(this.state.user)
 
     return (
       <div>
-        <Select
-          showSearch
-          style={{ width: 200 }}
-          placeholder="Select a person"
-          optionFilterProp="children"
-          onChange={handleChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-        >
-          <Option value="Diana">Diana</Option>
-          <Option value="Arthur">Arthur</Option>
-          <Option value="Charlie">Charlie</Option>
-        </Select>
+        <Button type="primary" onClick={this.handleSignInOrOut.bind(this)}>{this.state.buttonMessage}</Button>
         <ProductTable products={this.props.products} user={this.state.user} />
       </div>
     );
@@ -140,7 +94,7 @@ class ProductCard extends React.Component {
   addRecord(e) {
     this.makeModalHidden(this.props)
     if (this.user === '') {
-      var message = "Please select user!"
+      var message = "Please sign in!"
       console.log(message)
       this.makeModalVisible(message)
     }
@@ -275,7 +229,7 @@ class UpdateOrders extends React.Component {
   render() {
     var customerRows = [];
     for (var key in this.props.orders) {
-      console.log(key)
+      // console.log(key)
       customerRows.push(<TabPane tab={key} key={key}>
         <CustomerRow
           user={key}
@@ -286,7 +240,7 @@ class UpdateOrders extends React.Component {
         </TabPane>
       )
     }
-    console.log(customerRows)
+    // console.log(customerRows)
     return (
       <Tabs type="card">
         {customerRows}
@@ -324,9 +278,9 @@ class CustomerRow extends React.Component {
     var newSum = 0
     for (var i in this.props.orders) {
       var price = this.props.orders[i].data().price
-      console.log(price)
+      // console.log(price)
       newSum += price
-      console.log(newSum)
+      // console.log(newSum)
     }
 
     var orderCards = this.props.orders.map((o, index) => <OrderCard 
@@ -335,7 +289,7 @@ class CustomerRow extends React.Component {
               update={this.updateOrdersState}
               orderId={o.id}
               allOrders={this.props.orders}/>)
-    console.log(orderCards)
+    // console.log(orderCards)
     return (
       <div>
         <SumCard updateSum={this.updateSum.bind(this)} sum={newSum} />
@@ -346,23 +300,20 @@ class CustomerRow extends React.Component {
   }
 }
 
-// const WrappedHorizontalLoginForm = Form.create()(HorizontalLoginForm);
-
 export default class App extends React.Component {
   state = {
     activeOrders: []
   }
 
   componentDidMount() {
-    // console.log(this)
     var that = this;
     db.collection('orders').orderBy('user')
       .onSnapshot(function(querySnapshot) {
-        console.log(querySnapshot)
+        // console.log(querySnapshot)
         var orders = {};
         querySnapshot.forEach(function(doc) {
             var curUser = doc.data().user;
-            console.log(doc.data().user)
+            // console.log(doc.data().user)
             if (orders[curUser] === undefined) {
               orders[curUser] = [];
             }           
@@ -371,7 +322,6 @@ export default class App extends React.Component {
         that.setState({
           activeOrders: orders
         });
-        console.log(that.state)
       });
   }
 
