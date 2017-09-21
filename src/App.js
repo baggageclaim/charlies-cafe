@@ -108,7 +108,9 @@ class ProductCard extends React.Component {
       db.collection("orders").add({
         name: this.product.name,
         price: this.product.price,
-        user: this.user
+        user: this.user,
+        time: Date.now(),
+        fulfilled: false
       })
       .then(function(docRef) {
         console.log("Document with ID " + docRef.id + " successfully written")
