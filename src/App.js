@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Card, Form, Icon, Input, Select, Tabs, Button } from 'antd';
+import { Popconfirm, Alert, Card, Form, Icon, Input, Select, Tabs, Button } from 'antd';
 import firebase from './fire';
 import './index.css';
 
@@ -129,10 +129,12 @@ class ProductCard extends React.Component {
       </span>;
     return (
       <div>
-        <Card.Grid onClick={this.addRecord.bind(this.props)} style={gridStyle} >
-          <p>{name}</p>
-          <p>{(this.props.product.price).toFixed(2)}</p>
-        </Card.Grid>
+        <Popconfirm title="Place order?" okText="Yes" cancelText="No" onConfirm={this.addRecord.bind(this.props)}>
+          <Card.Grid style={gridStyle} >
+            <p>{name}</p>
+            <p>{(this.props.product.price).toFixed(2)}</p>
+          </Card.Grid>
+        </Popconfirm>
       </div>
       );
   }
@@ -227,11 +229,13 @@ class OrderCard extends React.Component {
     //   ? "10/05"
     //   : {date}
     return (
-      <Card.Grid onClick={this.deleteRecord.bind(this)} style={gridStyle} >
-        <p>{date}</p>
-        <p>{(this.props.order.price).toFixed(2)}</p>
-        <p>{this.props.order.name}</p>
-      </Card.Grid>
+      <Popconfirm title="Delete order？" okText="Yes" cancelText="No" onConfirm={this.deleteRecord.bind(this)}>
+        <Card.Grid style={gridStyle} >
+          <p>{date}</p>
+          <p>{(this.props.order.price).toFixed(2)}</p>
+          <p>{this.props.order.name}</p>
+        </Card.Grid>
+      </Popconfirm>
     );
   }
 }
