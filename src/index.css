@@ -1,0 +1,12 @@
+@import '~antd/dist/antd.css';
+h1 {
+	/*color: #ea503f;*/
+	color: #ea503f;
+	/*font-family: courier;*/
+}
+body {
+  margin: 0;
+  padding: 50px;
+  font-family: sans-serif;
+  background-color: 789342;
+}

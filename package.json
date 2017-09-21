@@ -1,0 +1,25 @@
+{
+  "name": "antd-demo",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "antd": "^2.13.1",
+    "firebase": "^4.1.2",
+    "firebase-admin": "^5.0.0",
+    "google-auth-library": "^0.10.0",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-scripts": "1.0.13",
+    "firestore": "file:firestore.tgz"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "deploy": "firebase deploy",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "babel-plugin-import": "^1.4.0"
+  }
+}
