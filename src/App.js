@@ -131,7 +131,7 @@ class ProductCard extends React.Component {
       <div>
         <Card.Grid onClick={this.addRecord.bind(this.props)} style={gridStyle} >
           <p>{name}</p>
-          <p>{this.props.product.price}</p>
+          <p>{(this.props.product.price).toFixed(2)}</p>
         </Card.Grid>
       </div>
       );
@@ -205,6 +205,7 @@ class OrderCard extends React.Component {
     this.props.update(updatedOrders)
   }
 
+  // customer should be able to delete record, but Charlie should fulfill on click
   deleteRecord() {
     var docId = this.props.orderId
     db.collection("orders").doc(docId).delete()
@@ -220,7 +221,7 @@ class OrderCard extends React.Component {
     return (
       <Card.Grid onClick={this.deleteRecord.bind(this)} style={gridStyle} >
         <p>ORDER FOR: {this.props.order.user}</p>
-        <p>{this.props.order.price}</p>
+        <p>{(this.props.order.price).toFixed(2)}</p>
         <p>{this.props.order.name}</p>
       </Card.Grid>
     );
@@ -266,7 +267,7 @@ class SumCard extends React.Component {
   render() {
     return (
       <Card title="RUNNING TOTAL" style={{cursor: 'pointer'}} onClick={this.props.updateSum}>
-        <p>{this.props.sum}</p>
+        <p>{(this.props.sum).toFixed(2)}</p>
     </Card>)
   }
 }
@@ -301,6 +302,7 @@ class CustomerRow extends React.Component {
               key={o.id}
               update={this.updateOrdersState}
               orderId={o.id}
+              user={this.props}
               allOrders={this.props.orders}/>)
     // console.log(orderCards)
     return (
