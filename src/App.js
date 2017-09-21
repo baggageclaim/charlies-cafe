@@ -1,15 +1,79 @@
 import React from 'react';
-import { Alert, Card, Select, Tabs } from 'antd';
-import db from './fire';
+import { Alert, Card, Form, Icon, Input, Select, Tabs, Button } from 'antd';
+import firebase from './fire';
 import './index.css';
 
 const TabPane = Tabs.TabPane;
+const db = firebase.firestore();
+const provider = new firebase.auth.GoogleAuthProvider();
+
+// const FormItem = Form.Item;
+
+// function hasErrors(fieldsError) {
+//   return Object.keys(fieldsError).some(field => fieldsError[field]);
+// }
 
 class Header extends React.Component {
   render() {
     return <h1>Charlie's Kitty Cafe</h1>
   }
 }
+
+// class HorizontalLoginForm extends React.Component {
+//   componentDidMount() {
+//     // To disabled submit button at the beginning.
+//     this.props.form.validateFields();
+//   }
+
+//   handleSubmit = (e) => {
+//     e.preventDefault();
+//     this.props.form.validateFields((err, values) => {
+//       if (!err) {
+//         console.log('Received values of form: ', values);
+//       }
+//     });
+//   }
+
+//   render() {
+//     const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
+
+//     // Only show error after a field is touched.
+//     const userNameError = isFieldTouched('userName') && getFieldError('userName');
+//     const passwordError = isFieldTouched('password') && getFieldError('password');
+//     return (
+//       <Form layout="inline" onSubmit={this.handleSubmit}>
+//         <FormItem
+//           validateStatus={userNameError ? 'error' : ''}
+//           help={userNameError || ''}
+//         >
+//           {getFieldDecorator('userName', {
+//             rules: [{ required: true, message: 'Please input your username!' }],
+//           })(
+//             <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="Username" />
+//           )}
+//         </FormItem>
+//         <FormItem
+//           validateStatus={passwordError ? 'error' : ''}
+//           help={passwordError || ''}
+//         >
+//           {getFieldDecorator('password', {
+//             rules: [{ required: true, message: 'Please input your Password!' }],
+//           })(
+//             <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="password" placeholder="Password" />
+//           )}
+//         </FormItem>
+//         <FormItem>
+//           <Button
+//             type="primary"
+//             htmlType="submit"
+//             disabled={hasErrors(getFieldsError())}>
+//             Log in
+//           </Button>
+//         </FormItem>
+//       </Form>
+//     );
+//   }
+// }
 
 class UserSelect extends React.Component {
   constructor(props) {
@@ -30,11 +94,11 @@ class UserSelect extends React.Component {
     }
 
     function handleBlur() {
-      // console.log('blur');
+      console.log('blur');
     }
 
     function handleFocus() {
-      // console.log('focus');
+      console.log('focus');
     }
 
     return (
@@ -63,29 +127,7 @@ const gridStyle = {
   width: '25%',
   textAlign: 'center',
   cursor: 'pointer',
-  // backgroundColor:'#EFEFEF'
 };
-
-// class OrderCardParent extends React.Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       popupHidden: true
-//     }
-//   }
-
-//   render() {
-//     if (!this.product.stocked) {
-//       return <Alert message="Item out of stock!" type="error" showIcon/>
-//     }
-//     else if (this.user === '') {
-//       return <Alert message="Please select user!" type="error" showIcon/>
-//     }
-//     // else {
-//     //   return 
-//     // }
-//   }
-// }
 
 class ProductCard extends React.Component {
   constructor(props) {
@@ -115,7 +157,7 @@ class ProductCard extends React.Component {
         user: this.user
       })
       .then(function(docRef) {
-        // console.log("Document with ID " + docRef.id + " successfully written: " + this.name + ", " + this.price)
+        console.log("Document with ID " + docRef.id + " successfully written")
       })
       .catch(function(error) {
         console.error("Error writing document: " + error);
@@ -199,22 +241,15 @@ class ProductTable extends React.Component {
 
 class OrderCard extends React.Component {
   removeOrder() {
-    // var orderId = this.props.order.id;
-    // document.getElementById('OrderRow').style.backgroundColor = 'grey';
-    // console.log(this)
     var currentOrders = this.props.allOrders;
-    // console.log(currentOrders)
     var that = this;
     var updatedOrders = currentOrders.filter(function(e) {
-      // console.log(e.id + "!==" + that.props.orderId)
       return e.id !== that.props.orderId;
     })
-    // console.log(updatedOrders)
     this.props.update(updatedOrders)
   }
 
   render() {
-    // console.log(this.removeOrder);
     return (
       <Card.Grid>
         <p>ORDER FOR: {this.props.order.user}</p>
@@ -253,13 +288,9 @@ class UpdateOrders extends React.Component {
     }
     console.log(customerRows)
     return (
-      // <Card title="Recent Orders" style={ {padding: '10px'} }>
-      // <div id="poop">
       <Tabs type="card">
         {customerRows}
       </Tabs>
-      // </div>
-      // </Card>
     )
   }
 }
@@ -312,20 +343,10 @@ class CustomerRow extends React.Component {
           {orderCards}
         </Card>
       </div>)
-      // // <Card title={title} style={ {padding: '10px'} }>
-      //   <div>
-      //   {this.props.orders.map((o, index) =>
-      //     <TabPane tab={user} key={user}>
-      //       <OrderCard 
-      //         order={o.data()}
-              // key={o.id}
-              // update={this.updateOrdersState}
-              // orderId={o.id}
-              // allOrders={this.props.orders}/>
-          // </TabPane>)}
-        // </div>);
   }
 }
+
+// const WrappedHorizontalLoginForm = Form.create()(HorizontalLoginForm);
 
 export default class App extends React.Component {
   state = {
@@ -346,10 +367,7 @@ export default class App extends React.Component {
               orders[curUser] = [];
             }           
             orders[curUser].push(doc);
-            // console.log(doc.id);
-            // if (doc.data().name )
-            // orders.push(doc);
-        });// console.log(doc)
+        });
         that.setState({
           activeOrders: orders
         });
@@ -366,7 +384,6 @@ export default class App extends React.Component {
     })
     console.log(this.state.activeOrders)
   }
-
 
   render() {
     return (

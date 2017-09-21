@@ -1,34 +1,40 @@
 import firebase from 'firebase';
+// import auth from 'firebase';
 import firestore from 'firestore';
 
-firebase.initializeApp({
-  apiKey: 'AIzaSyAGFmHiTFDrHqsI6iGj47f9MfX4YrrfXLA',
-  authDomain: 'charlies-cafe.firebaseapp.com',
-  projectId: 'charlies-cafe'
-});
+var config = {
+    apiKey: "AIzaSyAGFmHiTFDrHqsI6iGj47f9MfX4YrrfXLA",
+    authDomain: "charlies-cafe.firebaseapp.com",
+    databaseURL: "https://charlies-cafe.firebaseio.com",
+    projectId: "charlies-cafe",
+    storageBucket: "charlies-cafe.appspot.com",
+    messagingSenderId: "234006628796"
+  };
+firebase.initializeApp(config);
 
 firebase.firestore().settings({
-    // Enable offline support
   persistence: true
 });
 
-  // Initialize Cloud Firestore through firebase
-var db = firebase.firestore();
+// Initialize Cloud Firestore through firebase
+// var db = firebase.firestore();
+// var provider = new firebase.auth.GoogleAuthProvider();
 
-export default db;
+// firebase.auth().signInWithPopup(provider).then(function(result) {
+//   // This gives you a Google Access Token. You can use it to access the Google API.
+//   var token = result.credential.accessToken;
+//   // The signed-in user info.
+//   var user = result.user;
+//   // ...
+// }).catch(function(error) {
+//   // Handle Errors here.
+//   var errorCode = error.code;
+//   var errorMessage = error.message;
+//   // The email of the user's account used.
+//   var email = error.email;
+//   // The firebase.auth.AuthCredential type that was used.
+//   var credential = error.credential;
+//   // ...
+// });
 
-// var firebase = require("firebase");
-// require("firebase/auth");
-// require("firebase/database");
-
-// var config = {
-//     apiKey: "AIzaSyAGFmHiTFDrHqsI6iGj47f9MfX4YrrfXLA",
-//     authDomain: "charlies-cafe.firebaseapp.com",
-//     databaseURL: "https://charlies-cafe.firebaseio.com",
-//     projectId: "charlies-cafe",
-//     storageBucket: "charlies-cafe.appspot.com",
-//     messagingSenderId: "234006628796"
-// };
-
-// var fire = firebase.initializeApp(config);
-// export default fire;
+export default firebase;
