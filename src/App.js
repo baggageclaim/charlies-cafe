@@ -1,11 +1,41 @@
 import React from 'react';
-import { Popconfirm, Alert, Card, Form, Icon, Input, Select, Tabs, Button } from 'antd';
+import { Popconfirm, Alert, Card, Tabs, Button } from 'antd';
 import firebase from './fire';
 import './index.css';
+
+// require("firebase/firestore");
 
 const TabPane = Tabs.TabPane;
 const db = firebase.firestore();
 const provider = new firebase.auth.GoogleAuthProvider();
+// const messaging = firebase.messaging();
+
+firebase.firestore().enablePersistence()
+  .then(function() {
+      // Initialize Cloud Firestore through firebase
+      var db = firebase.firestore();
+  })
+  .catch(function(err) {
+      if (err.code == 'failed-precondition') {
+          // Multiple tabs open, persistence can only be enabled
+          // in one tab at a a time.
+          // ...
+      } else if (err.code == 'unimplemented') {
+          // The current browser does not support all of the
+          // features required to enable persistence
+          // ...
+      }
+  });
+
+// messaging.requestPermission()
+// .then(function() {
+//   console.log('Notification permission granted.');
+//   // TODO(developer): Retrieve an Instance ID token for use with FCM.
+//   // ...
+// })
+// .catch(function(err) {
+//   console.log('Unable to get permission to notify.', err);
+// });
 
 class Header extends React.Component {
   render() {
@@ -20,6 +50,7 @@ class UserSelect extends React.Component {
       user: '',
       buttonMessage: 'Sign In'
     }
+    this.signInWithGoogle = this.signInWithGoogle.bind(this)
   }
 
   handleSignInOrOut() {
@@ -33,34 +64,32 @@ class UserSelect extends React.Component {
   }
 
   signInWithGoogle() {
-    var that = this
-    firebase.auth().signInWithPopup(provider).then(function(result) {
-      var token = result.credential.accessToken;
+    firebase.auth().signInWithPopup(provider).then((result) => {
+      // var token = result.credential.accessToken;
       // The signed-in user info.
       var user = result.user;
       console.log("USER LOGGED IN AS: " + user.displayName)
-      that.setState({
+      this.setState({
         user: user.displayName,
         buttonMessage: 'Sign Out'
       })
-      console.log(that.state.user)
+      console.log(this.state.user)
     }).catch(function(error) {
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      var email = error.email;
-      var credential = error.credential;
+      // var errorCode = error.code;
+      // var errorMessage = error.message;
+      // var email = error.email;
+      // var credential = error.credential;
     });
   }
 
   signOutWithGoogle() {
-    var that = this
-    firebase.auth().signOut().then(function() {
+    firebase.auth().signOut().then(() => {
       // Sign-out successful.
-      that.setState({
+      this.setState({
         user: '',
         buttonMessage: 'Sign In'
       })
-      }).catch(function(error) {
+      }).catch((error) => {
         console.log("ERROR SIGNING OUT!")
     });
   }
@@ -70,7 +99,7 @@ class UserSelect extends React.Component {
 
     return (
       <div>
-        <Button type="primary" onClick={this.handleSignInOrOut.bind(this)}>{this.state.buttonMessage}</Button>
+        <Button type="primary" onClick={this.handleSignInOrOut}>{this.state.buttonMessage}</Button>
         <ProductTable products={this.props.products} user={this.state.user} />
       </div>
     );
@@ -93,13 +122,14 @@ class ProductCard extends React.Component {
 
   addRecord(e) {
     this.makeModalHidden(this.props)
+    var message
     if (this.user === '') {
-      var message = "Please sign in!"
+      message = "Please sign in!"
       console.log(message)
       this.makeModalVisible(message)
     }
     else if (!this.product.stocked) {
-      var message = "This item is out of stock! Please choose something else."
+      message = "This item is out of stock! Please choose something else."
       console.log(message)
       this.makeModalVisible(message)
     }
@@ -226,9 +256,11 @@ class OrderCard extends React.Component {
     // var orderDate = this.props.order.time === undefined
     //   ? "10/05"
     //   : {date}
+    var cardStyle = this.props.order.fulfilled ? 
+      { backgroundColor: '#FFFFFF' } : { backgroundColor: '#fefefe'}
     return (
       <Popconfirm title="Delete order？" okText="Yes" cancelText="No" onConfirm={this.deleteRecord.bind(this)}>
-        <Card.Grid style={gridStyle} >
+        <Card.Grid style={cardStyle} >
           <p>{date}</p>
           <p>{(this.props.order.price).toFixed(2)}</p>
           <p>{this.props.order.name}</p>
@@ -317,7 +349,7 @@ class CustomerRow extends React.Component {
     return (
       <div>
         <SumCard updateSum={this.updateSum.bind(this)} sum={newSum} />
-        <Card title="ORDERS">
+        <Card title={title}>
           {orderCards}
         </Card>
       </div>)

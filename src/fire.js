@@ -1,6 +1,7 @@
 import firebase from 'firebase';
-// import auth from 'firebase';
-import firestore from 'firestore';
+// import firestore from 'firestore';
+// import '@firebase/firestore';
+require("firebase/firestore");
 
 var config = {
     apiKey: "AIzaSyAGFmHiTFDrHqsI6iGj47f9MfX4YrrfXLA",
@@ -12,9 +13,9 @@ var config = {
   };
 firebase.initializeApp(config);
 
-firebase.firestore().settings({
-  persistence: true
-});
+// firebase.firestore().settings({
+//   persistence: true
+// });
 
 // Initialize Cloud Firestore through firebase
 // var db = firebase.firestore();
